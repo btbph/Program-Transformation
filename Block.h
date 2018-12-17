@@ -3,6 +3,9 @@
 
 #include <vector>
 
+//#define PARALLEL
+//#define PARALLEL_BLOCK
+
 using namespace std;
 using dataType = double;
 

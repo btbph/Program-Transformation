@@ -1,6 +1,10 @@
 #include "Block.h"
 #include <iostream>
 
+#ifdef PARALLEL
+#include "omp.h"
+#endif
+
 using namespace std;
 
 Block Block::operator*(const Block &a) const {
@@ -8,6 +12,11 @@ Block Block::operator*(const Block &a) const {
     vector<dataType> res;
     dataType sumElements = 0;
 
+#ifdef PARALLEL
+#ifdef PARALLEL_BLOCK
+#pragma omp parallel for
+#endif
+#endif
     for(int i = 0; i < N; i++) {
         for(int j = 0; j < N; j++) {
             for(int k = 0; k < N; k++) {

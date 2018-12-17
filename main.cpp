@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "Block.h"
+
 using namespace std;
 using namespace chrono;
 
@@ -83,6 +84,11 @@ vector<Block> multyplyBlockMatrices(const vector<Block>& A, vector<Block>& B, co
     int countIterations = N / sizeOfBlock;
     int countUnStoredBlocks;
 
+#ifdef PARALLEL
+    #ifndef PARALLEL_BLOCK
+    #pragma omp parallel for
+    #endif
+#endif
     for(int i = 0; i < countIterations; i++) {
         for(int j = 0; j < countIterations; j++) {
             countUnStoredBlocks = 0;
@@ -111,15 +117,21 @@ int main() {
     auto countElems = info[0];
     auto N = info[1];
     auto blockSize = info[2];
+
+    cout << "Start of reading files" << endl;
     auto aBlocks = readData("/Users/btbph/Desktop/GenerateMatrix/linear_a.txt", blockSize);
     auto bBlocks = readData("/Users/btbph/Desktop/GenerateMatrix/linear_b.txt", blockSize);
+    cout << "End of reading files" << endl;
+
     const int countBlocks = (int)aBlocks.size();
     auto toColumnOffset = createOffsetVector(countBlocks, N / blockSize);
     auto toRowOffset = swapKeysAndValues(toColumnOffset);
 
+    cout << "Multiplication start!" << endl;
+    auto timer = duration<double>();
     auto start_time = steady_clock::now();
     auto res = multyplyBlockMatrices(aBlocks, bBlocks, N, blockSize, toRowOffset);
-    auto timer = steady_clock::now() - start_time;
+    timer = steady_clock::now() - start_time;
 
     cout << "Matrixes multiplication time: " << timer.count() << " sec." << endl;
     ofstream fout("result.txt");
