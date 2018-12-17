@@ -9,12 +9,12 @@ using namespace std;
 
 Block Block::operator*(const Block &a) const {
     const int N = this->blockSize;
-    vector<dataType> res;
+    vector<dataType> res(this->matrixSize);
     dataType sumElements = 0;
 
 #ifdef PARALLEL
 #ifdef PARALLEL_BLOCK
-#pragma omp parallel for
+#pragma omp parallel for private(sumElements)
 #endif
 #endif
     for(int i = 0; i < N; i++) {
@@ -22,7 +22,7 @@ Block Block::operator*(const Block &a) const {
             for(int k = 0; k < N; k++) {
                 sumElements += this->matrix[getIndex(i, k)] * a.matrix[a.getIndex(k, j)];
             }
-            res.push_back(sumElements);
+            res[i*N+j] = sumElements;
             sumElements = 0;
         }
     }

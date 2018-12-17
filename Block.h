@@ -3,7 +3,7 @@
 
 #include <vector>
 
-//#define PARALLEL
+#define PARALLEL
 //#define PARALLEL_BLOCK
 
 using namespace std;
@@ -11,6 +11,7 @@ using dataType = double;
 
 class Block {
 public:
+    Block() { }
     explicit Block(const int& inputBlockSize) {
         matrixSize = inputBlockSize*inputBlockSize;
         matrix = vector<dataType>(matrixSize);

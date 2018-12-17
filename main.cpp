@@ -6,6 +6,10 @@
 
 #include "Block.h"
 
+#ifdef PARALLEL
+#include "omp.h"
+#endif
+
 using namespace std;
 using namespace chrono;
 
@@ -79,14 +83,14 @@ vector<int> swapKeysAndValues(const vector<int>& vec) {
 }
 
 vector<Block> multyplyBlockMatrices(const vector<Block>& A, vector<Block>& B, const int& N, const int& sizeOfBlock, const vector<int>& toRowOffset) {
-    vector<Block> res;
     Block sum(sizeOfBlock);
     int countIterations = N / sizeOfBlock;
     int countUnStoredBlocks;
+    vector<Block> res(countIterations*countIterations);
 
 #ifdef PARALLEL
     #ifndef PARALLEL_BLOCK
-    #pragma omp parallel for
+    #pragma omp parallel for private(countUnStoredBlocks) firstprivate(sum)
     #endif
 #endif
     for(int i = 0; i < countIterations; i++) {
@@ -97,14 +101,19 @@ vector<Block> multyplyBlockMatrices(const vector<Block>& A, vector<Block>& B, co
                 int indexB = k*(k+1)/2+j;
 
                 if (j > k) {
-                    indexB = ((j+1)*j/2 + k); // хорошо работает с первом рядом, учитывать j - k
+                    indexB = ((j+1)*j/2 + k);
                     sum += (A[toRowOffset[indexA]] * B[indexB].T());
                     B[indexB].T();
                     countUnStoredBlocks++;
                 }
-                else sum += (A[toRowOffset[indexA]] * B[indexB]);
+                else {
+                    auto tmp1 = A[toRowOffset[indexA]];
+                    auto tmp2 = B[indexB];
+                    auto tmp_res = A[toRowOffset[indexA]] * B[indexB];
+                    sum += (A[toRowOffset[indexA]] * B[indexB]);
+                }
             }
-            res.push_back(sum);
+            res[i*countIterations + j] = sum;
             sum.clear();
         }
     }
@@ -127,6 +136,7 @@ int main() {
     auto toColumnOffset = createOffsetVector(countBlocks, N / blockSize);
     auto toRowOffset = swapKeysAndValues(toColumnOffset);
 
+
     cout << "Multiplication start!" << endl;
     auto timer = duration<double>();
     auto start_time = steady_clock::now();
@@ -138,6 +148,7 @@ int main() {
     fout << timer.count() << endl;
     fout << blockSize << endl;
     fout.close();
+
 
     return 0;
 }
