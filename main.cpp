@@ -8,14 +8,17 @@ using namespace std;
 
 vector<Block> readData(const string &filePath, const int &N) {
     ifstream fin(filePath);
-    auto valuesInBlock = new vector<int>();
+    auto valuesInBlock = new vector<dataType>();
     vector<Block> res;
     string data;
     int i = 1;
     int countElemsInBlock = N * N;
     while (!fin.eof()) {
         fin >> data;
-        valuesInBlock->push_back(stoi(data));
+        if (typeid(dataType) == typeid(double))
+            valuesInBlock->push_back(stod(data));
+        if (typeid(dataType) == typeid(float))
+            valuesInBlock->push_back(stof(data));
         if (i != 0 && i % countElemsInBlock == 0) {
             res.emplace_back(*valuesInBlock, N);
             valuesInBlock->clear();
@@ -72,7 +75,7 @@ vector<int> swapKeysAndValues(const vector<int>& vec) {
     return res;
 }
 
-vector<Block> multyplyBlockMatrices(const vector<Block>& A, vector<Block>& B, const int& N, const int& sizeOfBlock, const vector<int>& toColumnOffset, const vector<int>& toRowOffset) {
+vector<Block> multyplyBlockMatrices(const vector<Block>& A, vector<Block>& B, const int& N, const int& sizeOfBlock, const vector<int>& toRowOffset) {
     vector<Block> res;
     Block sum(sizeOfBlock);
     int countIterations = N / sizeOfBlock;
@@ -112,9 +115,7 @@ int main() {
     auto toColumnOffset = createOffsetVector(countBlocks, N / blockSize);
     auto toRowOffset = swapKeysAndValues(toColumnOffset);
 
-    auto tmp = Block(1);
-
-    auto res = multyplyBlockMatrices(aBlocks, bBlocks, N, blockSize, toColumnOffset, toRowOffset);
+    auto res = multyplyBlockMatrices(aBlocks, bBlocks, N, blockSize, toRowOffset);
 
     return 0;
 }

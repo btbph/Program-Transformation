@@ -4,15 +4,16 @@
 #include <vector>
 
 using namespace std;
+using dataType = double;
 
 class Block {
 public:
     explicit Block(const int& inputBlockSize) {
         matrixSize = inputBlockSize*inputBlockSize;
-        matrix = vector<int>(matrixSize);
+        matrix = vector<dataType>(matrixSize);
         blockSize = inputBlockSize;
     }
-    Block(const vector<int>& initialMatrix, const int& blockSize) {
+    Block(const vector<dataType>& initialMatrix, const int& blockSize) {
         matrix = initialMatrix;
         matrixSize = (int)matrix.size();
         this->blockSize = blockSize;
@@ -29,7 +30,6 @@ public:
 
     void clear() {
         matrix.assign(this->matrixSize, 0);
-        matrixSize = (int)matrix.size();
     }
 
     int getIndex(int i, int j) const{
@@ -38,7 +38,7 @@ public:
 
 private:
     int matrixSize;
-    vector<int> matrix;
+    vector<dataType> matrix;
     int blockSize;
     bool isTranspose = false;
 };

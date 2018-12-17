@@ -5,8 +5,8 @@ using namespace std;
 
 Block Block::operator*(const Block &a) const {
     const int N = this->blockSize;
-    vector<int> res;
-    int sumElements = 0;
+    vector<dataType> res;
+    dataType sumElements = 0;
 
     for(int i = 0; i < N; i++) {
         for(int j = 0; j < N; j++) {
@@ -22,7 +22,7 @@ Block Block::operator*(const Block &a) const {
 
 Block Block::operator+(const Block &a) const {
     const int N = this->blockSize;
-    vector<int> res;
+    vector<dataType> res;
 
     for(int i = 0; i < N; i++)
         for(int j = 0; j < N; j++)
