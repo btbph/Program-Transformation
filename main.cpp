@@ -2,9 +2,11 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <chrono>
 
 #include "Block.h"
 using namespace std;
+using namespace chrono;
 
 vector<Block> readData(const string &filePath, const int &N) {
     ifstream fin(filePath);
@@ -115,7 +117,15 @@ int main() {
     auto toColumnOffset = createOffsetVector(countBlocks, N / blockSize);
     auto toRowOffset = swapKeysAndValues(toColumnOffset);
 
+    auto start_time = steady_clock::now();
     auto res = multyplyBlockMatrices(aBlocks, bBlocks, N, blockSize, toRowOffset);
+    auto timer = steady_clock::now() - start_time;
+
+    cout << "Matrixes multiplication time: " << timer.count() << " sec." << endl;
+    ofstream fout("result.txt");
+    fout << timer.count() << endl;
+    fout << blockSize << endl;
+    fout.close();
 
     return 0;
 }
