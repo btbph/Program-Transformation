@@ -139,15 +139,22 @@ int main() {
 
     cout << "Multiplication start!" << endl;
     auto timer = duration<double>();
-    auto start_time = steady_clock::now();
-    auto res = multyplyBlockMatrices(aBlocks, bBlocks, N, blockSize, toRowOffset);
-    timer = steady_clock::now() - start_time;
+    double totalTime = 0;
+    int countIterations = 5;
 
-    cout << "Matrixes multiplication time: " << timer.count() << " sec." << endl;
-    ofstream fout("result.txt");
-    fout << timer.count() << endl;
-    fout << blockSize << endl;
-    fout.close();
+    for(int i=0; i < countIterations; i++) {
+        auto start_time = steady_clock::now();
+        auto res = multyplyBlockMatrices(aBlocks, bBlocks, N, blockSize, toRowOffset);
+        timer = steady_clock::now() - start_time;
+        cout << "Matrixes multiplication time: " << timer.count() << " sec." << endl;
+        totalTime += timer.count();
+    }
+
+    cout << "Matrixes multiplication average time: " << totalTime / countIterations << " sec." << endl;
+//    ofstream fout("result.txt");
+//    fout << timer.count() << endl;
+//    fout << blockSize << endl;
+//    fout.close();
 
 
     return 0;

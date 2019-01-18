@@ -4,10 +4,11 @@
 #include <vector>
 
 #define PARALLEL
-//#define PARALLEL_BLOCK
+#define PARALLEL_BLOCK
 
 using namespace std;
-using dataType = double;
+//using dataType = double;
+using dataType = float;
 
 class Block {
 public:
